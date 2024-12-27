@@ -1,6 +1,10 @@
 
 <?php
-include '../connection.php';
+require_once '../connection.php';
+use App\Connection;
+
+$connection = new Connection();
+$conn = $connection->getConnection();
 
 date_default_timezone_set('Asia/Jakarta');
 

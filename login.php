@@ -41,15 +41,15 @@
 								<div class="m-sm-3">
 									<form>
 										<div class="mb-3">
-											<label class="form-label">Email</label>
+											<label class="form-label">Nama Pengguna</label>
 											<input class="form-control form-control-lg" type="email" name="email"/>
 										</div>
 										<div class="mb-3">
-											<label class="form-label">Password</label>
+											<label class="form-label">Kata Sandi</label>
 											<input class="form-control form-control-lg" type="password" name="password"/>
 										</div>
 										<div class="d-grid gap-2 mt-3">
-											<a class='btn btn-lg btn-primary' href='/'>Masuk</a>
+											<a class='btn btn-lg btn-primary' href='dashboard.php'>Masuk</a>
 										</div>
 									</form>
 								</div>

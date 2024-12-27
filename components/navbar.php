@@ -1,16 +1,16 @@
 <nav class="navbar navbar-expand navbar-light navbar-bg">
-				
 
-				<div class="navbar-collapse collapse">
-					<ul class="navbar-nav navbar-align">
-						<li class="nav-item dropdown">
-							<a class="nav-icon dropdown-toggle" href="../pages/dashboard/index-admin.php" id="alertsDropdown" data-bs-toggle="dropdown">
-								<div class="position-relative">
-									<i class="align-middle fa fa-bell" aria-hidden="true" ></i>
-									<span class="indicator">4</span>
-								</div>
-							</a>
-							<!-- <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav navbar-align">
+            <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle" href="../pages/dashboard/index-admin.php" id="alertsDropdown" data-bs-toggle="dropdown">
+                    <div class="position-relative">
+                        <i class="align-middle fa fa-bell" aria-hidden="true"></i>
+                        <span class="indicator">4</span>
+                    </div>
+                </a>
+                <!-- <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
 								<div class="dropdown-menu-header">
 									4 New Notifications
 								</div>
@@ -63,12 +63,12 @@
 										</div>
 									</a>
 								</div> -->
-								<!-- <div class="dropdown-menu-footer">
+                <!-- <div class="dropdown-menu-footer">
 									<a href="#" class="text-muted">Show all notifications</a>
 								</div>
 							</div> -->
-						</li>
-						<!-- <li class="nav-item dropdown">
+            </li>
+            <!-- <li class="nav-item dropdown">
 							<a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown">
 								<div class="position-relative">
 									<i class="align-middle" data-feather="message-square"></i>
@@ -134,21 +134,21 @@
 									<a href="../pages/dashboard/index-admin.php" class="text-muted">Show all messages</a>
 								</div>
 							</div> -->
-						</li>
-						<li class="nav-item dropdown">
+            </li>
+            <li class="nav-item dropdown">
                 <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
                     <i class="align-middle fa fa-cog" aria-hidden="true"></i>
                 </a>
                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
                     <img src="assets/img/avatars/avatar-2.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span class="text-dark">Admin</span>
                 </a>
-              <div class="dropdown-menu dropdown-menu-end">
-                    <a class="dropdown-item profile-btn" onclick="onProfile()" href="#"><i class="align-middle me-1 fa fa-user" aria-hidden="true"></i> Profile</a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item profile-btn" onclick="onProfile()" href="#"><i class="align-middle me-1 fa fa-user" aria-hidden="true"></i> Profil</a>
                     <div class="dropdown-divider profile-btn"></div>
-                    <a class="dropdown-item" href="login.php" onclick="logout()"><i class="align-middle me-1 fa fa-sign-out" aria-hidden="true"></i>Log out</a>
+                    <a class="dropdown-item" href="index1.php" onclick="logout()"><i class="align-middle me-1 fa fa-sign-out" aria-hidden="true"></i>Keluar</a>
                 </div>
-						</li>
-					</ul>
-				</div>
-			</nav>
+            </li>
+        </ul>
+    </div>
+</nav>
 </nav>
