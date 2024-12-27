@@ -1,12 +1,26 @@
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
+
 -- Membuat database
 CREATE DATABASE sibeta;
 GO
 USE sibeta;
 
+--_____________________________________________________________________________________________________________________
+-- Fungsi untuk mengenkripsi password
+CREATE OR ALTER FUNCTION dbo.EncryptPassword(@password NVARCHAR(4000))
+RETURNS NVARCHAR(4000)
+AS
+BEGIN
+    RETURN CONVERT(NVARCHAR(4000), HASHBYTES('SHA2_256', @password), 2);
+END;
+GO
+
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
+
 -- Tabel mahasiswa
 CREATE TABLE mahasiswa (
     nim VARCHAR(10) PRIMARY KEY,
-    password VARCHAR(8) NOT NULL, 
+    password VARCHAR(255) NOT NULL, -- Password terenkripsi 
     nama VARCHAR(100),
     tgl_lahir DATE,
     alamat VARCHAR(MAX),
@@ -23,12 +37,12 @@ CREATE TABLE mahasiswa (
 -- Tabel admin
 CREATE TABLE admin (
     nip VARCHAR(20) PRIMARY KEY,
-    password VARCHAR(8) NOT NULL, 
+    password VARCHAR(255) NOT NULL, -- Password terenkripsi 
     nama VARCHAR(100),
     role INT DEFAULT 1,
     jabatan VARCHAR(50),
     telp_admin VARCHAR(15),
-    email VARCHAR(100),
+    email VARCHAR(100)
 );
 
 -- Tabel jurusan
@@ -104,6 +118,204 @@ CREATE TABLE faq (
     nim VARCHAR(10), -- Kolom nim untuk foreign key ke mahasiswa
     CONSTRAINT FK_kuisioner_mahasiswa FOREIGN KEY (nim) REFERENCES mahasiswa(nim)
 );
+
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+-- View kompen
+CREATE VIEW view_kompen AS
+SELECT 
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    j.nama_jurusan,
+    k.jumlah_kompen,
+    k.tanggal_selesai,
+    k.file_kompen
+FROM 
+    mahasiswa m
+JOIN 
+    jurusan j ON m.id_jurusan = j.id_jurusan
+JOIN 
+    kompen k ON m.nim = k.nim;
+
+-- View pkl
+CREATE VIEW view_pkl AS
+SELECT 
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    j.nama_jurusan,
+    p.laporan_pkl,
+    p.sertifikat_pkl,
+    p.nilai_pkl
+FROM 
+    mahasiswa m
+JOIN 
+    jurusan j ON m.id_jurusan = j.id_jurusan
+JOIN 
+    pkl p ON m.nim = p.nim;
+
+-- View skkm
+CREATE VIEW view_skkm AS
+SELECT 
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    j.nama_jurusan,
+    s.jenis_sertifikat,
+    s.poin_skkm
+FROM 
+    mahasiswa m
+JOIN 
+    jurusan j ON m.id_jurusan = j.id_jurusan
+JOIN 
+    sertifikat s ON m.nim = s.nim;
+
+-- View skripsi
+CREATE VIEW view_skripsi AS
+SELECT 
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    j.nama_jurusan,
+    s.judul,
+    s.nilai,
+    s.lembar_pengesahan
+FROM 
+    mahasiswa m
+JOIN 
+    jurusan j ON m.id_jurusan = j.id_jurusan
+JOIN 
+    skripsi s ON m.nim = s.nim;
+
+-- View data mahasiswa
+CREATE VIEW view_mahasiswa_lengkap AS
+SELECT 
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    m.tgl_lahir,
+    m.alamat,
+    m.telp_mahasiswa,
+    m.status_semester,
+    m.telp_wali,
+    p.nama_prodi,
+    j.nama_jurusan
+FROM 
+    mahasiswa m
+JOIN 
+    prodi p ON m.id_prodi = p.id_prodi
+JOIN 
+    jurusan j ON m.id_jurusan = j.id_jurusan;
+
+-- View faq
+CREATE VIEW view_faq AS
+SELECT 
+    f.id_faq,
+    m.nim,
+    m.nama AS nama_mahasiswa,
+    f.pertanyaan,
+    f.jawaban
+FROM 
+    faq f
+JOIN 
+    mahasiswa m ON f.nim = m.nim;
+
+--__________________________________________________________________________________________________________
+
+-- Trigger untuk hashing password mahasiswa
+CREATE TRIGGER trg_hash_password_mahasiswa
+ON mahasiswa
+INSTEAD OF INSERT
+AS
+BEGIN
+	INSERT INTO mahasiswa (nim, password, nama, tgl_lahir, alamat, telp_mahasiswa, status_semester, telp_wali, id_prodi, id_jurusan, role)
+    SELECT 
+        nim, 
+        HASHBYTES('SHA2_256', password), -- Menggunakan SHA256 untuk hashing password
+        nama, tgl_lahir, alamat, telp_mahasiswa, status_semester, telp_wali, id_prodi, id_jurusan, role
+    FROM inserted;
+END;
+
+-- Trigger untuk hashing password admin
+CREATE TRIGGER trg_hash_password_admin
+ON admin
+INSTEAD OF INSERT
+AS
+BEGIN
+    INSERT INTO admin (nip, password, nama, role, jabatan, telp_admin, email)
+    SELECT 
+        nip, 
+        HASHBYTES('SHA2_256', password), -- Menggunakan SHA256 untuk hashing password
+        nama, role, jabatan, telp_admin, email
+    FROM inserted;
+END;
+
+-- Trigger Isi default file_kompen jika NULL saat insert
+CREATE TRIGGER trg_default_file_kompen
+ON kompen
+AFTER INSERT
+AS
+BEGIN
+    UPDATE kompen
+    SET file_kompen = 'File belum diunggah'
+    WHERE file_kompen IS NULL;
+END;
+
+--_____________________________________________________________________________________________________________________
+
+-- Stored Procedure untuk Menambahkan Mahasiswa
+CREATE OR ALTER PROCEDURE sp_InsertMahasiswa
+    @nim VARCHAR(10),
+    @password NVARCHAR(4000),
+    @nama NVARCHAR(100),
+    @tgl_lahir DATE,
+    @alamat NVARCHAR(MAX),
+    @telp_mahasiswa VARCHAR(15),
+    @status_semester NVARCHAR(50),
+	@telp_wali VARCHAR(15),
+    @id_prodi INT,
+    @id_jurusan INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO mahasiswa (nim, password, nama, tgl_lahir, alamat, telp_mahasiswa, status_semester, telp_wali, id_prodi, id_jurusan)
+    VALUES (
+        @nim,
+        dbo.EncryptPassword(@password),
+        @nama,
+		@tgl_lahir,
+        @alamat,
+        @telp_mahasiswa,
+        @status_semester,
+        @telp_wali,
+        @id_prodi,
+        @id_jurusan
+    );
+END;
+GO
+
+-- Stored Procedure untuk Menambahkan Admin
+CREATE OR ALTER PROCEDURE sp_InsertAdmin
+    @nip VARCHAR(20),
+    @password NVARCHAR(4000),
+    @nama NVARCHAR(100),
+    @role INT,
+    @jabatan NVARCHAR(50),
+    @telp_admin VARCHAR(15),
+    @email NVARCHAR(100)
+AS
+BEGIN
+	SET NOCOUNT ON;
+    INSERT INTO admin (nip, password, nama, role, jabatan, telp_admin, email)
+    VALUES (
+        @nip,
+        dbo.EncryptPassword(@password),
+        @nama,
+        @role,
+        @jabatan,
+        @telp_admin,
+        @email
+    );
+END;
+GO
+
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 -- Insert data into mahasiswa
 INSERT INTO mahasiswa (nim, password, nama, tgl_lahir, alamat, telp_mahasiswa, status_semester, telp_wali, id_prodi, id_jurusan)
@@ -186,6 +398,32 @@ VALUES
 ('Apa itu sistem bebas tanggungan?', 'Sistem bebas tanggungan adalah status yang diberikan kepada mahasiswa yang telah menyelesaikan semua kewajiban finansial dan administratif.', '2341760035'),
 ('Bagaimana cara mendapatkan status bebas tanggungan?', 'Mahasiswa dapat mendapatkan status bebas tanggungan dengan melunasi semua kewajiban finansial dan administratif yang berlaku.', '2341760013');
 
+--_____________________________________________________________________________________________________________________
+
+-- Menggunakan Stored Procedure)
+EXEC sp_InsertMahasiswa 
+    @nim = '2341760050',
+    @password = 'secure123',
+    @nama = 'Budi Santoso',
+    @tgl_lahir = '2004-11-16',
+    @alamat = 'Jakarta',
+    @telp_mahasiswa = '085676980123',
+    @status_semester = 'Aktif',
+    @telp_wali = '085733435642',
+	@id_prodi = 1,
+    @id_jurusan = 1;
+
+EXEC sp_InsertAdmin 
+    @nip = '199010102022001',
+    @password = 'admin456',
+    @nama = 'Rahmania',
+    @role = 1,
+    @jabatan = 'Administrator',
+    @telp_admin = '081301028426',
+	@email = 'rahmania@kampus.ac.id';
+
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
+
 -- Menampilkan semua data dari tabel mahasiswa
 SELECT * FROM mahasiswa;
 
@@ -216,4 +454,17 @@ SELECT * FROM form_berkas;
 -- Menampilkan semua data dari tabel faq
 SELECT * FROM faq;
 
+--_________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+-- Menampilkan view
+SELECT * FROM view_kompen;
+SELECT * FROM view_pkl;
+SELECT * FROM view_skkm;
+SELECT * FROM view_skripsi;
+SELECT * FROM view_mahasiswa_lengkap;
+SELECT * FROM view_faq;
+
+--_____________________________________________________________________________________________________________________
+-- Uji Coba Data dengan Enkripsi
+SELECT nim, password, nama FROM mahasiswa;
+SELECT nip, password, nama FROM admin;
