@@ -145,10 +145,28 @@
                 <div class="dropdown-menu dropdown-menu-end">
                     <a class="dropdown-item profile-btn" onclick="onProfile()" href="#"><i class="align-middle me-1 fa fa-user" aria-hidden="true"></i> Profil</a>
                     <div class="dropdown-divider profile-btn"></div>
-                    <a class="dropdown-item" href="index.php" onclick="logout()"><i class="align-middle me-1 fa fa-sign-out" aria-hidden="true"></i>Keluar</a>
+                    <a class="dropdown-item"onclick="onLogout()"><i class="align-middle me-1 fa fa-sign-out" aria-hidden="true"></i>Keluar</a>
                 </div>
             </li>
         </ul>
     </div>
 </nav>
 </nav>
+
+<script>
+	onLogout = () => {
+		$.ajax({
+			url: '/PBL/system/auth.php',
+			data: {
+				action : "logout"
+			},
+			type: 'POST',
+			success: (data) => {
+				window.location.reload()
+			},
+			error: (jqXHR, textStatus, errorThrown) => {
+				console.error('AJAX error: ' + textStatus + ' : ' + errorThrown);
+			}
+		});
+	}
+</script>

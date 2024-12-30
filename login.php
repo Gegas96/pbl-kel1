@@ -1,68 +1,81 @@
-<?php include "connection.php";?>
+<?php
+session_start();
+
+if (isset($_SESSION['user'])) {
+	header("location:/PBL/dashboard.php");
+}
+
+
+// Proses login sederhana (Username: admin, Password: 123)
+// if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//     $username = $_POST['username'];
+//     $password = $_POST['password'];
+
+//     // Cek username dan password
+//     if ($username == "admin" && $password == "123") {
+//         $_SESSION['username'] = $username; // Set session
+//         header("Location: dashboard.php"); // Redirect ke dashboard.html
+//         exit();
+//     } else {
+//         $error = "Username atau password salah!";
+//     }
+// }
+?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
-	<meta name="author" content="AdminKit">
-	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-
-	<link rel="preconnect" href="https://fonts.gstatic.com">
-	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
-
-	<link rel="canonical" href="https://demo-basic.adminkit.io/pages-sign-in.html" />
-
-	<title>SiBeta | Sistem Bebas Tanggungan</title>
-
-	<link href="assets/css/app.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bebas Tanggungan</title>
+    <link rel="stylesheet" href="Login.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-	<main class="d-flex w-100">
-		<div class="container d-flex flex-column">
-			<div class="row vh-100">
-				<div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto d-table h-100">
-					<div class="d-table-cell align-middle">
+    <!-- Background dari img/picture.jpg -->
+    <div class="background"></div>
 
-						<div class="text-center mt-4">
-							<h1 class="h2">Selamat Datang!</h1>
-							<p class="lead fw-bold">
-								Di SiBeta
-							</p>
-						</div>
+    <!-- Kontainer Login -->
+    <div class="login-container">
+        <div class="login-box">
+            <img src="img/polinema.png" alt="Logo Polinema" class="logo">
+            <h2>BEBAS TANGGUNGAN</h2>
+            <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+            <form id="loginForm">
+                <input type="text" name="username" placeholder="Username" required>
+                <!-- Input Password dengan Toggle -->
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <span id="togglePassword" onclick="togglePasswordVisibility()">👁️</span>
+                </div>
+                <button type="button" onclick="onLogin()">Masuk</button>
+            </form>
+        </div>
+    </div>
 
-						<div class="card">
-							<div class="card-body">
-								<div class="m-sm-3">
-									<form>
-										<div class="mb-3">
-											<label class="form-label">Nama Pengguna</label>
-											<input class="form-control form-control-lg" type="email" name="email"/>
-										</div>
-										<div class="mb-3">
-											<label class="form-label">Kata Sandi</label>
-											<input class="form-control form-control-lg" type="password" name="password"/>
-										</div>
-										<div class="d-grid gap-2 mt-3">
-											<a class='btn btn-lg btn-primary' href='dashboard.php'>Masuk</a>
-										</div>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
 
-	<script src="js/app.js"></script>
+    <!-- JavaScript untuk Toggle Password -->
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const toggleIcon = document.getElementById("togglePassword");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.textContent = "🔒";
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.textContent = "👁️";
+            }
+        }
+    </script>
 
+<?php include 'pages/login/login.php'; ?>
+
+    <script>
+        <?php include 'helper/helper.js'; ?>
+    </script>
 </body>
 
 </html>

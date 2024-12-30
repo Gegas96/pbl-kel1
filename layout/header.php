@@ -1,3 +1,8 @@
+<?php
+if (!isset($_SESSION['user'])) {
+	header("location:/PBL/login.php");
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
